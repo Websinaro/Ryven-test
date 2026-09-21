@@ -43,13 +43,13 @@ export const mediaLinks = {
   projects: [
     {
       id: "01",
-      videoUrl: "",
-      posterUrl: "",
+      videoUrl: "https://res.cloudinary.com/nwvobioj/video/upload/v1789961999/Sequence_01.mp4",
+      posterUrl: "https://res.cloudinary.com/nwvobioj/video/upload/v1789961999/Sequence_01.jpg",
     },
     {
       id: "02",
-      videoUrl: "",
-      posterUrl: "",
+      videoUrl: "https://res.cloudinary.com/nwvobioj/video/upload/v1789962239/Reel_edit_3.mp4",
+      posterUrl: "https://res.cloudinary.com/nwvobioj/video/upload/v1789962239/Reel_edit_3.jpg",
     },
     {
       id: "03",
