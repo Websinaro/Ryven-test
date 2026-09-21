@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import type { ResolvedMedia } from "@/data/portfolio";
 
@@ -9,6 +9,13 @@ type Props = {
   alt: string;
   className?: string;
 };
+
+type ActivationNavigator = Navigator & {
+  userActivation?: { isActive: boolean; hasBeenActive: boolean };
+};
+
+// Only one sample video plays at a time.
+let activeVideo: HTMLVideoElement | null = null;
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds)) return "0:00";
@@ -24,11 +31,21 @@ function formatTime(seconds: number) {
 export default function VideoPlayer({ resolved, alt, className }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  // Loads the file a bit before it appears on screen...
   const isInView = useInView(containerRef, { margin: "200px 0px", once: false });
+  // ...but plays only while at least half of the card is visible.
+  const isActive = useInView(containerRef, { amount: 0.5, once: false });
+
+  const isActiveRef = useRef(false);
+  isActiveRef.current = isActive;
+  const userPausedRef = useRef(false); // user pressed pause -> stay paused while in view
+  const userMutedRef = useRef(false); // user chose mute -> never auto-unmute
+  const autoMutedRef = useRef(false); // browser forced us to start muted
+  const [needsSoundTap, setNeedsSoundTap] = useState(false);
 
   const [shouldLoadSource, setShouldLoadSource] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0); // 0–100
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -39,19 +56,77 @@ export default function VideoPlayer({ resolved, alt, className }: Props) {
     if (isInView && resolved.playable) setShouldLoadSource(true);
   }, [isInView, resolved.playable]);
 
-  // Pause automatically once it scrolls out of view.
+  // Try to play WITH sound. Browsers only allow that after the visitor has
+  // interacted with the page (click / tap / key). If it is refused we fall back
+  // to muted playback and show a "Tap for sound" button instead of failing.
+  const playAuto = useCallback(async (video: HTMLVideoElement) => {
+    if (!userMutedRef.current) {
+      video.muted = false;
+      try {
+        await video.play();
+        autoMutedRef.current = false;
+        setNeedsSoundTap(false);
+        return;
+      } catch {
+        /* blocked -> fall through to muted */
+      }
+    }
+    video.muted = true;
+    autoMutedRef.current = !userMutedRef.current;
+    setNeedsSoundTap(!userMutedRef.current);
+    try {
+      await video.play();
+    } catch {
+      /* still blocked (e.g. data saver) - the play button remains */
+    }
+  }, []);
+
+  // Play when the card is mostly on screen, stop as soon as it scrolls away.
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !shouldLoadSource) return;
-    if (!isInView && isPlaying) video.pause();
-  }, [isInView, shouldLoadSource, isPlaying]);
+    if (!video || !resolved.playable) return;
+    if (isActive) {
+      if (shouldLoadSource && video.paused && !userPausedRef.current) {
+        playAuto(video).then(() => {
+          // scrolled away while the play request was pending
+          if (!isActiveRef.current) video.pause();
+        });
+      }
+    } else {
+      userPausedRef.current = false;
+      if (!video.paused) video.pause();
+    }
+  }, [isActive, shouldLoadSource, resolved.playable, playAuto]);
+
+  // First real click / tap / key press anywhere: turn the sound on for a video
+  // that had to start muted.
+  useEffect(() => {
+    const unlock = (e: Event) => {
+      const video = videoRef.current;
+      if (!video || !autoMutedRef.current || userMutedRef.current || video.paused) return;
+      const nav = navigator as ActivationNavigator;
+      const allowed = nav.userActivation
+        ? nav.userActivation.isActive
+        : e.type === "click" || e.type === "keydown";
+      if (!allowed) return;
+      video.muted = false;
+      autoMutedRef.current = false;
+      setNeedsSoundTap(false);
+      if (video.paused) video.play().catch(() => {});
+    };
+    const events = ["click", "touchend", "keydown"] as const;
+    events.forEach((ev) => window.addEventListener(ev, unlock, { passive: true }));
+    return () => events.forEach((ev) => window.removeEventListener(ev, unlock));
+  }, []);
 
   function togglePlay() {
     const video = videoRef.current;
     if (!video) return;
     if (video.paused) {
-      video.play().catch(() => {});
+      userPausedRef.current = false;
+      playAuto(video);
     } else {
+      userPausedRef.current = true;
       video.pause();
     }
   }
@@ -60,6 +135,9 @@ export default function VideoPlayer({ resolved, alt, className }: Props) {
     const video = videoRef.current;
     if (!video) return;
     video.muted = !video.muted;
+    userMutedRef.current = video.muted;
+    autoMutedRef.current = false;
+    setNeedsSoundTap(false);
     setIsMuted(video.muted);
   }
 
@@ -110,14 +188,19 @@ export default function VideoPlayer({ resolved, alt, className }: Props) {
       <video
         ref={videoRef}
         className="relative h-full w-full cursor-pointer object-contain"
-        muted={isMuted}
         loop
         playsInline
         preload="none"
         poster={resolved.poster}
         aria-label={alt}
         onClick={togglePlay}
-        onPlay={() => setIsPlaying(true)}
+        onPlay={(e) => {
+          const v = e.currentTarget;
+          if (activeVideo && activeVideo !== v) activeVideo.pause();
+          activeVideo = v;
+          setIsPlaying(true);
+        }}
+        onVolumeChange={(e) => setIsMuted(e.currentTarget.muted)}
         onPause={() => setIsPlaying(false)}
         onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
         onTimeUpdate={(e) => {
@@ -130,6 +213,17 @@ export default function VideoPlayer({ resolved, alt, className }: Props) {
       >
         {shouldLoadSource && <source src={resolved.url} type="video/mp4" />}
       </video>
+
+      {/* Shown only when the browser made us start muted */}
+      {needsSoundTap && isPlaying && (
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="absolute right-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/20 bg-background/60 px-3 py-1.5 text-xs tracking-wide text-primary backdrop-blur-md transition-colors hover:border-accent-bright/60"
+        >
+          <MutedIcon /> Tap for sound
+        </button>
+      )}
 
       {/* Center play button — visible when paused or on hover */}
       {(!isPlaying || showControls) && (
