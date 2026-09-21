@@ -28,22 +28,73 @@ export default function BackgroundVideo({ src, poster, className }: Props) {
     const video = videoRef.current;
     if (!video) return;
 
+    // React does not reliably put the `muted` ATTRIBUTE in the server HTML, and
+    // Safari / iOS / Android WebViews only allow autoplay when the attribute is
+    // really there. So force it on the element before we call play().
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+
     const handleMetadata = () => {
       if (video.videoWidth && video.videoHeight) {
         setRatio(video.videoWidth / video.videoHeight);
       }
     };
-    const handleCanPlay = () => setIsReady(true);
+
+    const tryPlay = () => {
+      if (!video.paused) return;
+      const p = video.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    };
+
+    // Show the video as soon as the first frame exists (not only on "canplay",
+    // which may never fire on browsers that hold back buffering), so a
+    // blocked autoplay still shows the footage frame instead of a stuck poster.
+    const handleFrame = () => {
+      handleMetadata();
+      setIsReady(true);
+      tryPlay();
+    };
 
     // The video may already be loaded (cache) before hydration attaches listeners.
     if (video.readyState >= 1) handleMetadata();
-    if (video.readyState >= 3) handleCanPlay();
+    if (video.readyState >= 2) setIsReady(true);
 
     video.addEventListener("loadedmetadata", handleMetadata);
-    video.addEventListener("canplay", handleCanPlay);
+    video.addEventListener("loadeddata", handleFrame);
+    video.addEventListener("canplay", handleFrame);
+    video.addEventListener("playing", handleFrame);
+
+    tryPlay();
+
+    // Fallbacks for browsers that still block autoplay (iOS Low Power Mode,
+    // battery / data saver, tab restored from background): retry when the tab
+    // becomes visible again and on the first touch / click / scroll.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tryPlay();
+    };
+    const interactionEvents = ["touchstart", "pointerdown", "click", "scroll", "keydown"] as const;
+    const onInteract = () => {
+      tryPlay();
+      if (!video.paused) cleanupInteraction();
+    };
+    const cleanupInteraction = () =>
+      interactionEvents.forEach((e) => window.removeEventListener(e, onInteract));
+
+    document.addEventListener("visibilitychange", onVisible);
+    interactionEvents.forEach((e) =>
+      window.addEventListener(e, onInteract, { passive: true })
+    );
+
     return () => {
       video.removeEventListener("loadedmetadata", handleMetadata);
-      video.removeEventListener("canplay", handleCanPlay);
+      video.removeEventListener("loadeddata", handleFrame);
+      video.removeEventListener("canplay", handleFrame);
+      video.removeEventListener("playing", handleFrame);
+      document.removeEventListener("visibilitychange", onVisible);
+      cleanupInteraction();
     };
   }, []);
 
@@ -76,7 +127,7 @@ export default function BackgroundVideo({ src, poster, className }: Props) {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
             poster={poster}
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: isReady ? 1 : 0 }}
