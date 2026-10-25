@@ -19,7 +19,7 @@ export default function ProjectSection({ project, resolved, index }: Props) {
           {project.id}
         </Reveal>
 
-        <ClipReveal from={index % 2 ? "left" : "bottom"} className="group transition-transform duration-700 ease-cinematic hover:scale-[1.015]">
+        <ClipReveal>
           <ProjectMedia resolved={resolved} alt={project.title} />
         </ClipReveal>
 

@@ -150,7 +150,7 @@ body {
 }
 
 /* Marquee */
-.marquee-track { display: flex; width: max-content; animation: marquee 35s linear infinite; }
+.marquee-track { display: flex; width: max-content; animation: marquee 60s linear infinite; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 .marquee-row { display: flex; gap: 2.5rem; padding-right: 2.5rem; }
 @keyframes marquee { to { transform: translateX(-50%); } }

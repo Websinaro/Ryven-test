@@ -42,8 +42,8 @@ export default function Reveal({
   children,
   className,
   delay = 0,
-  y = 24,
-  blur = 14,
+  y = 18,
+  blur = 6,
   duration = 0.9,
   once = false,
 }: Props) {
