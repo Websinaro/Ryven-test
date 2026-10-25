@@ -2,6 +2,7 @@
 
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
+import CountUp from "./CountUp";
 import { site } from "@/data/site";
 
 export default function About() {
@@ -30,7 +31,7 @@ export default function About() {
           <div className="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4">
             {site.about.stats.map((stat, i) => (
               <Reveal key={stat.label} delay={i * 0.1}>
-                <p className="font-display text-3xl font-semibold text-primary">{stat.value}</p>
+                <p className="font-display text-3xl font-semibold text-primary"><CountUp value={stat.value} /></p>
                 <p className="mt-1 text-xs tracking-wide text-muted">{stat.label}</p>
               </Reveal>
             ))}
