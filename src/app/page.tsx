@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import ProjectSection from "@/components/ProjectSection";
+import Testimonials from "@/components/Testimonials";
 import About from "@/components/About";
 import ContactCTA from "@/components/ContactCTA";
 import { portfolio, resolveProjectMedia } from "@/data/portfolio";
@@ -24,6 +25,7 @@ export default function Home() {
         ))}
       </section>
 
+      <Testimonials />
       <About />
       <ContactCTA />
     </main>

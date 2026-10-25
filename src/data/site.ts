@@ -28,6 +28,14 @@ export const site = {
     stats: [] as { label: string; value: string }[],
   },
 
+  // PLACEHOLDERS — replace with real client quotes before launch (or set to [] to hide the section).
+  testimonials: [
+    { quote: "Replace with a real client quote about working with you.", name: "Client Name", role: "Brand / Role" },
+    { quote: "Replace with a real client quote about the results.", name: "Client Name", role: "Brand / Role" },
+    { quote: "Replace with a real client quote about the process.", name: "Client Name", role: "Brand / Role" },
+    { quote: "Replace with a real client quote about turnaround.", name: "Client Name", role: "Brand / Role" },
+  ] as { quote: string; name: string; role: string }[],
+
   contact: {
     heading: ["LET'S MAKE", "SOMETHING WORTH WATCHING."],
     instagramUrl: process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/yourstudio",
