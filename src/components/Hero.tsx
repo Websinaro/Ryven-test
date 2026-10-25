@@ -39,10 +39,10 @@ export default function Hero() {
       {/* In normal flow: the hero is exactly as tall as the full, uncropped video */}
       <BackgroundVideo src={heroMedia.url} poster={portfolio.hero.posterUrl} />
 
-      {/* Scrims: top (navbar) + left (headline) keep the copy readable over the footage */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/90 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background via-background/70 to-transparent md:w-3/5" />
-      <div className="film-lines pointer-events-none absolute inset-0" />
+      {/* Light scrims only: a soft top fade for the navbar and a gentle left fade
+          (desktop) so the headline reads. The footage stays fully visible. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-background/60 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/2 bg-gradient-to-r from-background/70 via-background/25 to-transparent md:block" />
 
       {/* Content: overlaps the faded bottom of the video on mobile; on desktop it
           is pinned to the bottom of the first screen (or of the video if shorter) */}

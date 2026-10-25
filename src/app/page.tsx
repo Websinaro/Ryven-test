@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="relative bg-background">
+    <main className="relative overflow-x-clip bg-background">
       <Navbar />
       <Hero />
       <Work />

@@ -18,12 +18,11 @@ export default function ContactCTA() {
           src={backdrop}
           alt=""
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 h-full w-full object-cover object-center opacity-35 md:w-3/4"
+          className="pointer-events-none absolute inset-y-0 right-0 h-full w-full object-cover object-center opacity-60 md:w-3/4"
         />
       )}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/20" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/60" />
-      <div className="film-lines pointer-events-none absolute inset-0" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-background/40" />
 
       <div className="relative mx-auto max-w-[90rem]">
         <Reveal as="p" y={12} blur={10} duration={0.7} className="label mb-8 flex items-center gap-4 text-[0.625rem] text-muted">

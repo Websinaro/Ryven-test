@@ -43,6 +43,8 @@
    scroller is active it must be OFF, or the two animations fight. */
 html {
   scroll-behavior: smooth;
+  /* No sideways scrolling: slide-in cards and decorative markers may poke past the edge */
+  overflow-x: clip;
 }
 html.smooth-scroll {
   scroll-behavior: auto;
@@ -63,6 +65,8 @@ html.smooth-scroll {
 }
 
 body {
+  overflow-x: clip;
+  max-width: 100%;
   background-color: var(--color-background);
   color: var(--color-primary);
   font-family: var(--font-body);
