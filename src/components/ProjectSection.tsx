@@ -3,6 +3,7 @@
 import ProjectMedia from "./ProjectMedia";
 import Reveal from "./Reveal";
 import ClipReveal from "./ClipReveal";
+import CardReveal from "./CardReveal";
 import type { Project, ResolvedMedia } from "@/data/portfolio";
 
 type Props = {
@@ -13,15 +14,18 @@ type Props = {
 
 // Bento layout: card 1 wide, card 2 narrow, card 3 full width.
 const LAYOUT = [
-  { span: "md:col-span-8", aspect: "aspect-video md:aspect-[16/10]" },
-  { span: "md:col-span-4", aspect: "aspect-video md:aspect-[4/5]" },
-  { span: "md:col-span-12", aspect: "aspect-video md:aspect-[21/9]" },
+  { span: "md:col-span-8", aspect: "aspect-video md:aspect-[16/10]", from: "left" as const },
+  { span: "md:col-span-4", aspect: "aspect-video md:aspect-[4/5]", from: "right" as const },
+  { span: "md:col-span-12", aspect: "aspect-video md:aspect-[21/9]", from: "up" as const },
 ];
 
 export default function ProjectSection({ project, resolved, index }: Props) {
-  const { span, aspect } = LAYOUT[index % LAYOUT.length];
+  const { span, aspect, from } = LAYOUT[index % LAYOUT.length];
   return (
-    <div className={`flex flex-col gap-5 rounded-2xl border border-line bg-surface/40 p-4 md:p-5 ${span}`}>
+    <CardReveal
+      from={from}
+      className={`flex flex-col gap-5 rounded-2xl border border-line bg-surface/40 p-4 md:p-5 ${span}`}
+    >
       <ClipReveal>
         <ProjectMedia resolved={resolved} alt={project.title} aspect={aspect} />
       </ClipReveal>
@@ -56,6 +60,6 @@ export default function ProjectSection({ project, resolved, index }: Props) {
           </Reveal>
         )}
       </div>
-    </div>
+    </CardReveal>
   );
 }

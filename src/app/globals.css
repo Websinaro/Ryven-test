@@ -54,8 +54,13 @@
   background: linear-gradient(to bottom, var(--paper) 0%, #cfdcd4 18%, #7f978a 45%, #24402f 78%, var(--forest) 100%);
 }
 
+/* Native smooth scroll is the fallback (touch / no-JS). When the JS smooth
+   scroller is active it must be OFF, or the two animations fight. */
 html {
   scroll-behavior: smooth;
+}
+html.smooth-scroll {
+  scroll-behavior: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -159,3 +164,38 @@ body {
 .link-underline { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s; padding-bottom: 2px; }
 .link-underline:hover { background-size: 100% 1px; }
 .marquee-slow { animation-duration: 45s; }
+
+/* Premium card hover: cursor-following glow + lit border (set by CardReveal) */
+.card-glow {
+  position: relative;
+  --mx: 50%;
+  --my: 50%;
+}
+.card-glow::before,
+.card-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* lit 1px border that follows the cursor */
+.card-glow::before {
+  padding: 1px;
+  background: radial-gradient(360px circle at var(--mx) var(--my), var(--color-accent-bright), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  z-index: 2;
+}
+/* faint spotlight wash */
+.card-glow::after {
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(111, 224, 168, 0.07), transparent 65%);
+  z-index: 1;
+}
+.card-glow:hover::before,
+.card-glow:hover::after {
+  opacity: 1;
+}

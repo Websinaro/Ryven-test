@@ -2,12 +2,13 @@
 
 import MagneticButton from "./MagneticButton";
 import Reveal from "./Reveal";
+import CardReveal from "./CardReveal";
 import { site, getWhatsappUrl } from "@/data/site";
 
 export default function ContactCTA() {
   return (
     <section id="contact" className="border-t border-line px-6 py-24 md:px-12 md:py-32">
-      <div className="mx-auto max-w-6xl rounded-2xl border border-line bg-surface/40 px-6 py-16 text-center md:py-28">
+      <CardReveal className="mx-auto max-w-6xl rounded-2xl border border-line bg-surface/40 px-6 py-16 text-center md:py-28">
         <Reveal
           as="h2"
           className="font-display text-4xl font-semibold leading-tight tracking-tight text-primary text-balance md:text-6xl"
@@ -38,7 +39,7 @@ export default function ContactCTA() {
         <Reveal as="p" delay={0.3} y={12} blur={8} className="mt-16 text-xs tracking-widest text-muted">
           © {new Date().getFullYear()} {site.contact.email}
         </Reveal>
-      </div>
+      </CardReveal>
     </section>
   );
 }
