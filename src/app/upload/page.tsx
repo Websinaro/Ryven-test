@@ -58,14 +58,14 @@ export default function UploadPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-primary">
-      <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-8">
+      <div className="w-full max-w-md rounded-sm border border-line bg-surface p-8">
         <h1 className="font-display text-2xl font-semibold">Media Upload</h1>
         <p className="mt-2 text-sm text-muted">
           Owner-only utility. Uploads directly to Cloudinary using an unsigned preset — no server, no
           database involved.
         </p>
 
-        <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-line-strong px-6 py-10 text-center transition-colors hover:border-accent-bright">
+        <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-sm border border-dashed border-line-strong px-6 py-10 text-center transition-colors hover:border-accent-bright">
           <span className="text-sm text-muted">Click to select a video or image</span>
           <input type="file" accept="video/*,image/*" className="hidden" onChange={handleFileChange} />
         </label>
@@ -80,7 +80,7 @@ export default function UploadPage() {
             <div className="mt-2 break-all rounded-lg bg-background/60 p-3 text-xs text-muted">{resultUrl}</div>
             <button
               onClick={copyUrl}
-              className="mt-3 rounded-full bg-primary px-5 py-2 text-xs font-medium text-background transition-colors hover:bg-accent-bright"
+              className="mt-3 label rounded-full bg-primary px-5 py-3 text-background transition-colors hover:bg-accent"
             >
               {copied ? "Copied!" : "Copy URL"}
             </button>

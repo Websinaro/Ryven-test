@@ -3,55 +3,40 @@
 @tailwind utilities;
 
 :root {
-  /* Palette: deep forest green + white, mixed section by section.
-     Dark sections use the vars below; `.theme-light` flips them to white. */
-  --forest: #071a12;
-  --paper: #f4f8f5;
+  /* Palette (dark forest, layered):
+     background #030806 -> sections #061A14 -> cards #0A241B -> borders #17382B
+     text #F1F3EE, accent #8FCB9B */
+  --c-bg: #030806;
+  --c-section: #061a14;
+  --c-card: #0a241b;
+  --c-border: #17382b;
+  --c-text: #f1f3ee;
+  --c-accent: #8fcb9b;
 
-  --color-primary: #f6faf7;        /* soft white text */
-  --color-muted: #9db8a9;          /* green-tinted grey for secondary text */
-  --color-background: var(--forest);
-  --color-surface: #0d2a1e;        /* lighter green for cards */
-  --color-accent: #1f8a5b;         /* emerald */
-  --color-accent-bright: #6fe0a8;  /* mint — hovers, scrubber, highlights */
-  --color-line: rgba(246, 250, 247, 0.12);
-  --color-line-strong: rgba(246, 250, 247, 0.25);
+  --color-primary: var(--c-text);
+  --color-muted: #94a89b;          /* text, softened toward the green */
+  --color-background: var(--c-bg);
+  --color-section: var(--c-section);
+  --color-surface: var(--c-card);
+  --color-accent: var(--c-accent);
+  --color-accent-bright: var(--c-accent);
+  --color-line: var(--c-border);
+  --color-line-strong: #285a45;    /* border, one step brighter (outline buttons, dashed zones) */
 
-  --font-display: "Neue Montreal", "Helvetica Neue", Arial, sans-serif;
-  --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
-}
+  /* Same colours as space-separated RGB channels, so Tailwind opacity
+     modifiers (bg-background/70, text-primary/75 …) work. */
+  --rgb-primary: 241 243 238;
+  --rgb-muted: 148 168 155;
+  --rgb-background: 3 8 6;
+  --rgb-section: 6 26 20;
+  --rgb-surface: 10 36 27;
+  --rgb-accent: 143 203 155;
+  --rgb-line: 23 56 43;
+  --rgb-line-strong: 40 90 69;
 
-/* White / light section: same tokens, flipped. Anything inside that uses
-   text-primary, text-muted, bg-background, border-line… adapts automatically. */
-.theme-light {
-  --color-primary: #0b2a1d;
-  --color-muted: #4f6b5c;
-  --color-background: var(--paper);
-  --color-surface: #e2ede6;
-  --color-accent: #1f8a5b;
-  --color-accent-bright: #1f8a5b;
-  --color-line: rgba(7, 26, 18, 0.14);
-  --color-line-strong: rgba(7, 26, 18, 0.3);
-}
-
-/* Re-asserts the dark tokens inside a light section (e.g. video cards). */
-.theme-dark {
-  --color-primary: #f6faf7;
-  --color-muted: #9db8a9;
-  --color-background: var(--forest);
-  --color-surface: #0d2a1e;
-  --color-accent: #1f8a5b;
-  --color-accent-bright: #6fe0a8;
-  --color-line: rgba(246, 250, 247, 0.12);
-  --color-line-strong: rgba(246, 250, 247, 0.25);
-}
-
-/* Soft colour-mixing bands between dark-green and white sections */
-.blend-dark-to-light {
-  background: linear-gradient(to bottom, var(--forest) 0%, #24402f 22%, #7f978a 55%, #cfdcd4 82%, var(--paper) 100%);
-}
-.blend-light-to-dark {
-  background: linear-gradient(to bottom, var(--paper) 0%, #cfdcd4 18%, #7f978a 45%, #24402f 78%, var(--forest) 100%);
+  --font-display: var(--font-chakra), "Helvetica Neue", Arial, sans-serif;
+  --font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 /* Native smooth scroll is the fallback (touch / no-JS). When the JS smooth
@@ -100,7 +85,7 @@ body {
 /* Keeps hero copy crisp over bright/high-key footage without needing a
    heavier, less premium-looking overlay box behind the text. */
 .text-shadow-depth {
-  text-shadow: 0 2px 24px rgba(3, 14, 9, 0.6), 0 1px 3px rgba(3, 14, 9, 0.7);
+  text-shadow: 0 2px 24px rgba(3, 8, 6, 0.6), 0 1px 3px rgba(3, 8, 6, 0.7);
 }
 
 /* Custom video player — range input restyled as a minimal, premium scrubber */
@@ -192,10 +177,32 @@ body {
 }
 /* faint spotlight wash */
 .card-glow::after {
-  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(111, 224, 168, 0.07), transparent 65%);
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(143, 203, 155, 0.07), transparent 65%);
   z-index: 1;
 }
 .card-glow:hover::before,
 .card-glow:hover::after {
   opacity: 1;
+}
+
+@layer components {
+/* Mono "technical label" style used for eyebrows, tags, nav and buttons */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Crosshair "+" mark (logo, section markers) */
+.crosshair { position: relative; display: inline-block; width: 1rem; height: 1rem; flex: none; }
+.crosshair::before, .crosshair::after { content: ""; position: absolute; background: currentColor; }
+.crosshair::before { left: 0; right: 0; top: 50%; height: 1px; }
+.crosshair::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+}
+
+/* Faint film-grain / scanline texture for hero + CTA */
+.film-lines {
+  background-image: repeating-linear-gradient(to bottom, rgba(241, 243, 238, 0.025) 0, rgba(241, 243, 238, 0.025) 1px, transparent 1px, transparent 4px);
 }

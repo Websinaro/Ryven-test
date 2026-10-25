@@ -8,10 +8,12 @@ type Props = {
   href: string;
   children: ReactNode;
   variant?: "primary" | "secondary";
+  /** Trailing glyph. Default "→"; use "↗" for external / start-a-project links. */
+  arrow?: string;
   className?: string;
 };
 
-export default function MagneticButton({ href, children, variant = "primary", className }: Props) {
+export default function MagneticButton({ href, children, variant = "primary", arrow = "→", className }: Props) {
   const ref = useRef<HTMLAnchorElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const prefersReducedMotion = useReducedMotion();
@@ -37,16 +39,16 @@ export default function MagneticButton({ href, children, variant = "primary", cl
       animate={{ x: offset.x, y: offset.y }}
       transition={{ type: "spring", stiffness: 150, damping: 12, mass: 0.3 }}
       className={clsx(
-        "group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium tracking-wide transition-colors duration-300",
+        "label group inline-flex items-center gap-2 rounded-full px-6 py-3.5 font-medium transition-colors duration-300",
         variant === "primary"
-          ? "bg-primary text-background hover:bg-accent-bright"
-          : "border border-line-strong text-primary hover:border-accent-bright hover:text-accent-bright",
+          ? "bg-accent text-background hover:bg-primary md:bg-primary md:hover:bg-accent"
+          : "border border-line-strong text-primary hover:border-accent hover:text-accent",
         className
       )}
     >
       {children}
       <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
-        →
+        {arrow}
       </span>
     </motion.a>
   );

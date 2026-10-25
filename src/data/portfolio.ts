@@ -21,6 +21,7 @@ export type Project = {
   id: string;
   title: string;
   description: string;
+  tags: string[];
   href?: string;
 };
 
@@ -35,17 +36,20 @@ export const portfolio = {
     {
       id: "01",
       title: "Project One",
-      description: "Short one-line description of the edit and its goal.",
+      description: "A cinematic edit blending real footage with subtle VFX to create an immersive story.",
+      tags: ["EDITING", "MOTION"],
     },
     {
       id: "02",
       title: "Project Two",
-      description: "Short one-line description of the edit and its goal.",
+      description: "High-energy social content designed for maximum engagement and brand impact.",
+      tags: ["EDITING", "MOTION", "VFX"],
     },
     {
       id: "03",
       title: "Project Three",
-      description: "Short one-line description of the edit and its goal.",
+      description: "Product visuals with VFX enhancements for a premium, cinematic look.",
+      tags: ["MOTION", "VFX"],
     },
   ].slice(0, 3) as Project[],
 };

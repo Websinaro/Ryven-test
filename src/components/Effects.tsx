@@ -44,7 +44,7 @@ export default function Effects() {
             key="loader"
             exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.9, ease: EASE }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#071a12]"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#030806]"
             style={{ clipPath: "inset(0 0 0% 0)" }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -60,7 +60,7 @@ export default function Effects() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 1.3, ease: EASE }}
-              className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-[#6fe0a8]"
+              className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-accent"
             />
           </motion.div>
         )}
@@ -93,7 +93,7 @@ export default function Effects() {
         animate={{ opacity: loading ? 0 : 1, y: loading ? 20 : 0 }}
         transition={{ delay: 1.8, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         whileHover={{ scale: 1.06 }}
-        className="fixed bottom-5 right-5 z-50 rounded-full bg-accent px-5 py-3 text-sm font-medium text-[#f6faf7] shadow-lg"
+        className="fixed bottom-5 right-5 z-50 rounded-full label bg-accent px-5 py-3.5 font-medium text-[#030806] shadow-lg"
       >
         <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-accent/40" />
         Chat with us
