@@ -51,7 +51,7 @@ export default function Work() {
         </div>
       </div>
 
-      <section id="work" className="relative bg-section px-6 py-20 md:px-12 md:py-28">
+      <section id="work" className="relative bg-section px-6 py-24 md:px-12 md:py-36">
         <div className="mx-auto max-w-[90rem]">
           <div className="flex items-end justify-between gap-6">
             <SectionHeading index="01" eyebrow="FEATURED" big>

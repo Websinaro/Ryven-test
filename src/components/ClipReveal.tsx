@@ -15,7 +15,7 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 // in-view/autoplay logic keeps working. When fully open the clip is removed.
 export default function ClipReveal({ children, className }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { margin: "0px 0px -8% 0px" });
+  const inView = useInView(ref, { margin: "0px 0px -8% 0px", once: true });
   const inViewRef = useRef(false);
   inViewRef.current = inView;
   const reduce = useReducedMotion();

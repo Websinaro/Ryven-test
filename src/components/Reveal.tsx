@@ -43,7 +43,8 @@ export default function Reveal({
   className,
   delay = 0,
   y = 18,
-  blur = 6,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  blur = 0, // kept for API compatibility: blur filters were the main scroll-lag source
   duration = 0.9,
   once = false,
 }: Props) {
@@ -60,11 +61,10 @@ export default function Reveal({
     <Tag
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y, filter: `blur(${blur}px)` }}
+      initial={{ opacity: 0, y }}
       whileInView={{
         opacity: 1,
         y: 0,
-        filter: "blur(0px)",
         // the (staggered) blur-in
         transition: { duration, delay, ease: EASE },
       }}
@@ -76,12 +76,6 @@ export default function Reveal({
       }}
       onViewportLeave={() => {
         visible.current = false;
-      }}
-      onAnimationComplete={() => {
-        // Fully revealed: drop the filter so it doesn't keep a needless
-        // compositing layer (matters for the video cards). framer re-applies
-        // it on the next blur-out.
-        if (visible.current && ref.current) ref.current.style.filter = "none";
       }}
     >
       {children}

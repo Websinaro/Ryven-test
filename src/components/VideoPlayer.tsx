@@ -181,7 +181,7 @@ export default function VideoPlayer({ resolved, alt, className }: Props) {
           src={resolved.poster}
           alt=""
           aria-hidden
-          className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-3xl saturate-[0.85] brightness-[0.5]"
+          className="absolute inset-0 h-full w-full object-cover opacity-40 brightness-50"
         />
       )}
 
@@ -219,7 +219,7 @@ export default function VideoPlayer({ resolved, alt, className }: Props) {
         <button
           type="button"
           onClick={toggleMute}
-          className="absolute right-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/20 bg-background/60 px-3 py-1.5 text-xs tracking-wide text-primary backdrop-blur-md transition-colors hover:border-accent-bright/60"
+          className="absolute right-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/20 bg-background/75 px-3 py-1.5 text-xs tracking-wide text-primary transition-colors hover:border-accent-bright/60"
         >
           <MutedIcon /> Tap for sound
         </button>
@@ -234,7 +234,7 @@ export default function VideoPlayer({ resolved, alt, className }: Props) {
           className="absolute inset-0 flex items-center justify-center transition-opacity"
         >
           <span
-            className={`flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-background/60 backdrop-blur-md transition-transform duration-300 hover:scale-105 hover:border-accent-bright/60 ${
+            className={`flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-background/75 transition-transform duration-300 hover:scale-105 hover:border-accent-bright/60 ${
               isPlaying ? "opacity-0 group-hover/player:opacity-100" : "opacity-100"
             }`}
           >

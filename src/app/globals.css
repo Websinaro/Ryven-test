@@ -89,7 +89,7 @@ body {
 /* Keeps hero copy crisp over bright/high-key footage without needing a
    heavier, less premium-looking overlay box behind the text. */
 .text-shadow-depth {
-  text-shadow: 0 2px 24px rgba(3, 8, 6, 0.6), 0 1px 3px rgba(3, 8, 6, 0.7);
+  text-shadow: 0 1px 12px rgba(3, 8, 6, 0.55);
 }
 
 /* Custom video player — range input restyled as a minimal, premium scrubber */
@@ -160,8 +160,7 @@ body {
   --mx: 50%;
   --my: 50%;
 }
-.card-glow::before,
-.card-glow::after {
+.card-glow::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -179,13 +178,7 @@ body {
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
   z-index: 2;
 }
-/* faint spotlight wash */
-.card-glow::after {
-  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(143, 203, 155, 0.07), transparent 65%);
-  z-index: 1;
-}
-.card-glow:hover::before,
-.card-glow:hover::after {
+.card-glow:hover::before {
   opacity: 1;
 }
 
@@ -210,3 +203,12 @@ body {
 .film-lines {
   background-image: repeating-linear-gradient(to bottom, rgba(241, 243, 238, 0.025) 0, rgba(241, 243, 238, 0.025) 1px, transparent 1px, transparent 4px);
 }
+
+/* Premium finish: slim dark scrollbar, crisp text, gentle image rendering */
+html { scrollbar-width: thin; scrollbar-color: var(--c-border) var(--c-bg); }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--c-bg); }
+::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #285a45; }
+body { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+a, button { -webkit-tap-highlight-color: transparent; }

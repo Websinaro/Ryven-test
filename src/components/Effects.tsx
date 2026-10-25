@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { site, getWhatsappUrl } from "@/data/site";
 
@@ -12,10 +12,12 @@ export default function Effects() {
   const [loading, setLoading] = useState(true);
   const [hover, setHover] = useState(false);
   const [fine, setFine] = useState(false);
+  const dragArea = useRef<HTMLDivElement>(null);
+  const moved = useRef(false);
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
-  const sx = useSpring(x, { stiffness: 500, damping: 40, mass: 0.4 });
-  const sy = useSpring(y, { stiffness: 500, damping: 40, mass: 0.4 });
+  const sx = useSpring(x, { stiffness: 600, damping: 45, mass: 0.3 });
+  const sy = useSpring(y, { stiffness: 600, damping: 45, mass: 0.3 });
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
@@ -27,12 +29,18 @@ export default function Effects() {
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches) return;
     setFine(true);
+    let wasHover = false;
     const move = (e: MouseEvent) => {
       x.set(e.clientX);
       y.set(e.clientY);
-      setHover(!!(e.target as HTMLElement)?.closest("a,button,input,[role=button]"));
+      // only re-render when the hover state actually flips
+      const h = !!(e.target as HTMLElement)?.closest("a,button,input,[role=button]");
+      if (h !== wasHover) {
+        wasHover = h;
+        setHover(h);
+      }
     };
-    window.addEventListener("mousemove", move);
+    window.addEventListener("mousemove", move, { passive: true });
     return () => window.removeEventListener("mousemove", move);
   }, [x, y]);
 
@@ -80,24 +88,51 @@ export default function Effects() {
           <motion.div
             animate={{ scale: hover ? 2.4 : 1, opacity: hover ? 0.5 : 0.9 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="h-6 w-6 rounded-full border border-white bg-white/10 mix-blend-difference"
+            className="h-6 w-6 rounded-full border border-accent/80 bg-accent/10"
           />
         </motion.div>
       )}
 
-      <motion.a
-        href={getWhatsappUrl("Hi! I'd like to start a project.")}
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: loading ? 0 : 1, y: loading ? 20 : 0 }}
-        transition={{ delay: 1.8, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        whileHover={{ scale: 1.06 }}
-        className="fixed bottom-5 right-5 z-50 rounded-full label bg-accent px-5 py-3.5 font-medium text-[#030806] shadow-lg"
-      >
-        <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-accent/40" />
-        Chat with us
-      </motion.a>
+      {/* Floating, draggable chat button. The full-screen layer only defines the
+          area it can be dragged within; it never blocks clicks on the page. */}
+      <div ref={dragArea} className="pointer-events-none fixed inset-0 z-50">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: loading ? 0 : 1, y: loading ? 20 : 0 }}
+          transition={{ delay: 1.8, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute bottom-5 right-5"
+        >
+          <motion.a
+            href={getWhatsappUrl("Hi! I'd like to start a project.")}
+            target="_blank"
+            rel="noopener noreferrer"
+            draggable={false}
+            drag
+            dragConstraints={dragArea}
+            dragElastic={0.08}
+            dragMomentum={false}
+            onDragStart={() => {
+              moved.current = true;
+            }}
+            onDragEnd={() => {
+              // let the click that follows a drag pass, then re-enable clicks
+              window.setTimeout(() => {
+                moved.current = false;
+              }, 60);
+            }}
+            onClick={(e) => {
+              if (moved.current) e.preventDefault(); // dragging must not open the chat
+            }}
+            whileHover={{ scale: 1.04 }}
+            whileDrag={{ scale: 1.08, cursor: "grabbing" }}
+            aria-label="Chat with us (drag to move)"
+            className="label pointer-events-auto flex cursor-grab touch-none select-none items-center gap-2.5 rounded-full border border-accent/40 bg-section/90 px-5 py-3.5 font-medium text-primary shadow-[0_8px_30px_rgba(0,0,0,0.45)] transition-colors hover:border-accent"
+          >
+            <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_rgba(143,203,155,0.9)]" />
+            Chat with us
+          </motion.a>
+        </motion.div>
+      </div>
     </>
   );
 }

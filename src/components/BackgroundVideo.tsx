@@ -15,11 +15,9 @@ type Props = {
 // page background so it melts into the next section instead of cutting off.
 const DEFAULT_RATIO = 16 / 9; // used until the real size is known (no layout jump for 16:9 footage)
 
-const BOTTOM_FADE_MASK =
-  "linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,0.55) 80%, transparent 100%)";
-
 export default function BackgroundVideo({ src, poster, className }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const pausedOffscreen = useRef(false); // we paused it ourselves (hero scrolled away)
   const [isReady, setIsReady] = useState(false);
   const [ratio, setRatio] = useState(DEFAULT_RATIO);
   // True when the video is NOT playing even though we tried (autoplay blocked by
@@ -81,6 +79,7 @@ export default function BackgroundVideo({ src, poster, className }: Props) {
     // Something stopped the video (blocker, battery saver, ...). Ignore pauses
     // that happen because the tab is hidden - the browser resumes those itself.
     const handlePause = () => {
+      if (pausedOffscreen.current) return;
       if (document.visibilityState === "visible") setNeedsPlay(true);
     };
 
@@ -123,7 +122,25 @@ export default function BackgroundVideo({ src, poster, className }: Props) {
       window.addEventListener(e, onInteract, { passive: true })
     );
 
+    // Save CPU/GPU: stop decoding the hero video once it is scrolled out of view.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (pausedOffscreen.current) {
+            pausedOffscreen.current = false;
+            tryPlay();
+          }
+        } else if (!video.paused) {
+          pausedOffscreen.current = true;
+          video.pause();
+        }
+      },
+      { threshold: 0 }
+    );
+    io.observe(video);
+
     return () => {
+      io.disconnect();
       window.clearTimeout(checkTimer);
       video.removeEventListener("loadedmetadata", handleMetadata);
       video.removeEventListener("loadeddata", handleFrame);
@@ -142,10 +159,7 @@ export default function BackgroundVideo({ src, poster, className }: Props) {
       style={{ aspectRatio: ratio }}
     >
       {/* Masked layer: poster + video fade out toward the bottom */}
-      <div
-        className="absolute inset-0"
-        style={{ maskImage: BOTTOM_FADE_MASK, WebkitMaskImage: BOTTOM_FADE_MASK }}
-      >
+      <div className="absolute inset-0">
         {poster && (
           <img
             src={poster}
@@ -175,8 +189,9 @@ export default function BackgroundVideo({ src, poster, className }: Props) {
         )}
       </div>
 
-      {/* Extra guaranteed blend into the page background at the very bottom */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      {/* Bottom fade into the page background (plain gradient overlay: far cheaper
+          than masking a playing video, same look) */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-background via-background/55 to-transparent" />
 
       {/* Fallback play button: only when the video is not playing. z-20 keeps it
           above the hero text layer so it is always clickable. */}
@@ -188,7 +203,7 @@ export default function BackgroundVideo({ src, poster, className }: Props) {
             aria-label="Play background video"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="pointer-events-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/30 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="pointer-events-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/30 bg-black/40 text-white transition-colors hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
           >
             <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6" fill="currentColor" aria-hidden="true">
               <path d="M8 5v14l11-7z" />
