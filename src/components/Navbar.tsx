@@ -21,8 +21,9 @@ export default function Navbar() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-50 flex items-center justify-between px-6 py-6 mix-blend-exclusion md:px-12"
       >
-        <a href="#top" className="font-display text-lg font-semibold tracking-wide text-primary">
-          {site.shortName}
+        <a href="#top" aria-label={site.shortName} className="block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-full.png" alt={site.shortName} className="h-12 w-auto md:h-14" />
         </a>
 
         <ul className="hidden gap-8 text-sm font-medium tracking-wide text-primary md:flex">

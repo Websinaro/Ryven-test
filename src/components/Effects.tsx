@@ -47,16 +47,15 @@ export default function Effects() {
             className="fixed inset-0 z-[100] flex items-center justify-center bg-[#071a12]"
             style={{ clipPath: "inset(0 0 0% 0)" }}
           >
-            <span className="block overflow-hidden">
-              <motion.span
-                initial={{ y: "110%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-                className="block font-display text-4xl font-semibold tracking-tight text-[#f6faf7] md:text-6xl"
-              >
-                {site.shortName}
-              </motion.span>
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <motion.img
+              src="/logo-mark.png"
+              alt={site.shortName}
+              initial={{ opacity: 0, scale: 0.9, clipPath: "inset(0 0 100% 0)" }}
+              animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0 0% 0)" }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              className="h-24 w-auto md:h-32"
+            />
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
