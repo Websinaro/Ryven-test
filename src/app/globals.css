@@ -148,3 +148,13 @@ body {
   border-radius: 999px;
   background: transparent;
 }
+
+/* Marquee */
+.marquee-track { display: flex; width: max-content; animation: marquee 35s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-row { display: flex; gap: 2.5rem; padding-right: 2.5rem; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Animated link underline */
+.link-underline { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s; padding-bottom: 2px; }
+.link-underline:hover { background-size: 100% 1px; }

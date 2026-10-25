@@ -25,6 +25,11 @@ const item = {
   },
 };
 
+const lineItem = {
+  hidden: { y: "110%" },
+  show: { y: "0%", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
+};
+
 export default function Hero() {
   return (
     <section id="top" className="relative w-full overflow-hidden bg-background md:min-h-[34rem]">
@@ -54,7 +59,7 @@ export default function Hero() {
         >
           {site.hero.headingLines.map((line) => (
             <span key={line} className="block overflow-hidden">
-              <motion.span variants={item} className="block">
+              <motion.span variants={lineItem} className="block">
                 {line}
               </motion.span>
             </span>

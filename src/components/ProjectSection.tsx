@@ -2,6 +2,7 @@
 
 import ProjectMedia from "./ProjectMedia";
 import Reveal from "./Reveal";
+import ClipReveal from "./ClipReveal";
 import type { Project, ResolvedMedia } from "@/data/portfolio";
 
 type Props = {
@@ -18,9 +19,9 @@ export default function ProjectSection({ project, resolved, index }: Props) {
           {project.id}
         </Reveal>
 
-        <Reveal duration={1.1} y={32} blur={20}>
+        <ClipReveal from={index % 2 ? "left" : "bottom"} className="group transition-transform duration-700 ease-cinematic hover:scale-[1.015]">
           <ProjectMedia resolved={resolved} alt={project.title} />
-        </Reveal>
+        </ClipReveal>
 
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <Reveal
@@ -41,7 +42,7 @@ export default function ProjectSection({ project, resolved, index }: Props) {
               href={project.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium tracking-wide text-primary transition-colors hover:text-accent-bright"
+              className="link-underline text-sm font-medium tracking-wide text-primary transition-colors hover:text-accent-bright"
             >
               WATCH PROJECT ↗
             </a>

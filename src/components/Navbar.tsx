@@ -28,7 +28,7 @@ export default function Navbar() {
         <ul className="hidden gap-8 text-sm font-medium tracking-wide text-primary md:flex">
           {links.map((link) => (
             <li key={link.href}>
-              <a href={link.href} className="transition-opacity hover:opacity-60">
+              <a href={link.href} className="link-underline">
                 {link.label}
               </a>
             </li>

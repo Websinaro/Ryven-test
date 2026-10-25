@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Marquee from "@/components/Marquee";
 import ProjectSection from "@/components/ProjectSection";
 import About from "@/components/About";
 import ContactCTA from "@/components/ContactCTA";
@@ -15,6 +16,7 @@ export default function Home() {
     <main className="relative bg-background">
       <Navbar />
       <Hero />
+      <Marquee />
 
       <section id="work" className="relative">
         {resolvedProjects.map(({ project, resolved }, index) => (
