@@ -1,12 +1,20 @@
 import VideoPlayer from "./VideoPlayer";
 import type { ResolvedMedia } from "@/data/portfolio";
 
-export default function ProjectMedia({ resolved, alt }: { resolved: ResolvedMedia; alt: string }) {
+export default function ProjectMedia({
+  resolved,
+  alt,
+  aspect = "aspect-video",
+}: {
+  resolved: ResolvedMedia;
+  alt: string;
+  aspect?: string;
+}) {
   return (
     <VideoPlayer
       resolved={resolved}
       alt={alt}
-      className="relative aspect-video w-full overflow-hidden rounded-xl bg-surface md:aspect-[16/8]"
+      className={`relative w-full overflow-hidden rounded-xl bg-surface ${aspect}`}
     />
   );
 }

@@ -6,8 +6,8 @@ import { site, getWhatsappUrl } from "@/data/site";
 
 export default function ContactCTA() {
   return (
-    <section id="contact" className="border-t border-line px-6 py-28 md:px-12 md:py-40">
-      <div className="mx-auto max-w-4xl text-center">
+    <section id="contact" className="border-t border-line px-6 py-24 md:px-12 md:py-32">
+      <div className="mx-auto max-w-6xl rounded-2xl border border-line bg-surface/40 px-6 py-16 text-center md:py-28">
         <Reveal
           as="h2"
           className="font-display text-4xl font-semibold leading-tight tracking-tight text-primary text-balance md:text-6xl"

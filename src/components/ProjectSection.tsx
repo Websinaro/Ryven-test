@@ -11,30 +11,37 @@ type Props = {
   index: number;
 };
 
+// Bento layout: card 1 wide, card 2 narrow, card 3 full width.
+const LAYOUT = [
+  { span: "md:col-span-8", aspect: "aspect-video md:aspect-[16/10]" },
+  { span: "md:col-span-4", aspect: "aspect-video md:aspect-[4/5]" },
+  { span: "md:col-span-12", aspect: "aspect-video md:aspect-[21/9]" },
+];
+
 export default function ProjectSection({ project, resolved, index }: Props) {
+  const { span, aspect } = LAYOUT[index % LAYOUT.length];
   return (
-    <div className="relative border-t border-line px-6 py-20 md:px-12 md:py-32">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <Reveal as="span" y={16} duration={0.7} className="font-display text-sm text-muted">
-          {project.id}
-        </Reveal>
+    <div className={`flex flex-col gap-5 rounded-2xl border border-line bg-surface/40 p-4 md:p-5 ${span}`}>
+      <ClipReveal>
+        <ProjectMedia resolved={resolved} alt={project.title} aspect={aspect} />
+      </ClipReveal>
 
-        <ClipReveal>
-          <ProjectMedia resolved={resolved} alt={project.title} />
-        </ClipReveal>
-
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      <div className="flex flex-1 flex-col justify-between gap-4 px-1 pb-1">
+        <div className="flex items-start justify-between gap-4">
           <Reveal
             as="h3"
-            className="font-display text-2xl font-semibold tracking-tight text-primary md:text-4xl"
+            className="font-display text-xl font-semibold tracking-tight text-primary md:text-3xl"
           >
             {project.title}
           </Reveal>
-
-          <Reveal as="p" delay={0.12} className="max-w-md text-sm text-muted md:text-base">
-            {project.description}
+          <Reveal as="span" y={16} duration={0.7} className="font-display text-sm text-muted">
+            {project.id}
           </Reveal>
         </div>
+
+        <Reveal as="p" delay={0.12} className="max-w-md text-sm text-muted md:text-base">
+          {project.description}
+        </Reveal>
 
         {project.href && (
           <Reveal delay={0.2}>
