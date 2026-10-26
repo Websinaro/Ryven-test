@@ -3,14 +3,12 @@
 import { useRef, type ReactNode } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 
-const OPEN = "inset(0% 0% 0% 0% round 14px)";
-const CLOSED = "inset(16% 6% 16% 6% round 14px)";
+const OPEN = "inset(0% 0% 0% 0%)";
+const CLOSED = "inset(22% 0% 0% 0%)";
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-// Cinematic mask reveal for video frames — IN and OUT:
-//   enter: the frame "opens" from a letterboxed crop while a light sweep glides across
-//   leave: it closes back down and dims
-// Replays every time (scrolling down or up). The trigger sits on an unclipped
+// Cinematic mask reveal for video frames: the frame wipes up from its lower edge
+// while a light sweep glides across. Plays once, when first scrolled into view. The trigger sits on an unclipped
 // wrapper and the mask never starts fully closed, so the video's own
 // in-view/autoplay logic keeps working. When fully open the clip is removed.
 export default function ClipReveal({ children, className }: { children: ReactNode; className?: string }) {
@@ -36,7 +34,7 @@ export default function ClipReveal({ children, className }: { children: ReactNod
         {children}
 
         {/* one-off light sweep across the frame as it opens */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-[14px]">
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           <motion.div
             initial={{ x: "-130%" }}
             animate={{ x: inView ? "280%" : "-130%" }}

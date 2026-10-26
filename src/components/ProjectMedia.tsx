@@ -14,7 +14,7 @@ export default function ProjectMedia({
     <VideoPlayer
       resolved={resolved}
       alt={alt}
-      className={`relative w-full overflow-hidden rounded-sm border border-line bg-background ${aspect}`}
+      className={`relative w-full overflow-hidden border border-line bg-background transition-colors duration-500 group-hover:border-accent/50 ${aspect}`}
     />
   );
 }

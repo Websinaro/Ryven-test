@@ -75,6 +75,10 @@ export default function SmoothScroll() {
       if (e.defaultPrevented || e.ctrlKey || e.metaKey) return; // pinch-zoom etc.
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // horizontal gesture
       if (document.fullscreenElement) return;
+      if (root.classList.contains("intro-lock")) {
+        e.preventDefault(); // page is frozen while the intro plays
+        return;
+      }
       if (insideScrollable(e.target, e.deltaY)) return;
       e.preventDefault();
       let delta = e.deltaY;

@@ -9,6 +9,7 @@ const config: Config = {
         muted: "rgb(var(--rgb-muted) / <alpha-value>)",
         background: "rgb(var(--rgb-background) / <alpha-value>)",
         section: "rgb(var(--rgb-section) / <alpha-value>)",
+        intro: "rgb(var(--rgb-intro) / <alpha-value>)",
         surface: "rgb(var(--rgb-surface) / <alpha-value>)",
         accent: "rgb(var(--rgb-accent) / <alpha-value>)",
         "accent-bright": "rgb(var(--rgb-accent) / <alpha-value>)",

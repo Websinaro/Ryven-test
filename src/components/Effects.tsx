@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
-import { site, getWhatsappUrl } from "@/data/site";
-
-const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { getWhatsappUrl } from "@/data/site";
+import GridPreloader from "./GridPreloader";
+import { setIntroDone, useIntroDone } from "./intro";
 
 // Site-wide effects: intro loader, scroll progress, custom cursor, floating chat button.
 export default function Effects() {
@@ -21,10 +21,24 @@ export default function Effects() {
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
+  const introDone = useIntroDone();
+
+  // Lock the page while the intro plays; skip it entirely for reduced-motion users.
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), reduce ? 0 : 1500);
-    return () => clearTimeout(t);
+    if (reduce) {
+      setLoading(false);
+      setIntroDone();
+      return;
+    }
+    const root = document.documentElement;
+    root.classList.add("intro-lock");
+    window.scrollTo(0, 0);
+    return () => root.classList.remove("intro-lock");
   }, [reduce]);
+
+  useEffect(() => {
+    if (!loading) document.documentElement.classList.remove("intro-lock");
+  }, [loading]);
 
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches) return;
@@ -46,33 +60,7 @@ export default function Effects() {
 
   return (
     <>
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            key="loader"
-            exit={{ clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.9, ease: EASE }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#030806]"
-            style={{ clipPath: "inset(0 0 0% 0)" }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <motion.img
-              src="/logo-mark.png"
-              alt={site.shortName}
-              initial={{ opacity: 0, scale: 0.9, clipPath: "inset(0 0 100% 0)" }}
-              animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0 0% 0)" }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-              className="h-24 w-auto md:h-32"
-            />
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 1.3, ease: EASE }}
-              className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-accent"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {loading && <GridPreloader onReveal={setIntroDone} onDone={() => setLoading(false)} />}
 
       <motion.div
         style={{ scaleX: progress }}
@@ -98,8 +86,8 @@ export default function Effects() {
       <div ref={dragArea} className="pointer-events-none fixed inset-0 z-50">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: loading ? 0 : 1, y: loading ? 20 : 0 }}
-          transition={{ delay: 1.8, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          animate={{ opacity: introDone ? 1 : 0, y: introDone ? 0 : 20 }}
+          transition={{ delay: 1.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="absolute bottom-5 right-5"
         >
           <motion.a

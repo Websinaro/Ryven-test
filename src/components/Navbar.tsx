@@ -1,24 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { site } from "@/data/site";
+import { useIntroDone } from "./intro";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState("#top");
+  const introDone = useIntroDone();
 
   const links = [
-    { label: site.nav.home, href: "#top", active: true },
+    { label: site.nav.home, href: "#top" },
     { label: site.nav.work, href: "#work" },
     { label: site.nav.about, href: "#about" },
     { label: site.nav.contact, href: "#contact" },
   ];
 
+  // Scroll-spy: underline follows the section that crosses the middle of the viewport.
+  useEffect(() => {
+    const els = links
+      .map((l) => document.querySelector(l.href))
+      .filter((el): el is Element => Boolean(el));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setCurrent(`#${e.target.id}`);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <header className="absolute inset-x-0 top-0 z-30">
       <motion.nav
         initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={introDone ? { opacity: 1, y: 0 } : { opacity: 0, y: -12 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-50 grid grid-cols-[1fr_auto] items-center px-6 py-6 md:grid-cols-[1fr_auto_1fr] md:px-12"
       >
@@ -34,7 +55,7 @@ export default function Navbar() {
               <a
                 href={link.href}
                 className={`block border-b pb-1.5 transition-colors hover:text-primary ${
-                  link.active ? "border-accent text-primary" : "border-transparent text-muted"
+                  link.href === current ? "border-accent text-primary" : "border-transparent text-muted"
                 }`}
               >
                 {link.label}

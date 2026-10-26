@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
 import ProjectSection from "./ProjectSection";
@@ -39,11 +40,13 @@ export default function Work() {
                   }`}
                 >
                   {name}
-                  <span
-                    className={`absolute inset-x-4 bottom-0 h-px bg-accent transition-opacity duration-300 md:inset-x-8 ${
-                      on ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
+                  {on && (
+                    <motion.span
+                      layoutId="specialty-underline"
+                      transition={{ type: "spring", stiffness: 420, damping: 38 }}
+                      className="absolute inset-x-4 bottom-0 h-px bg-accent md:inset-x-8"
+                    />
+                  )}
                 </button>
               );
             })}
@@ -51,7 +54,7 @@ export default function Work() {
         </div>
       </div>
 
-      <section id="work" className="relative bg-section px-6 py-24 md:px-12 md:py-36">
+      <section id="work" className="relative bg-section px-6 py-20 md:px-12 md:py-32">
         <div className="mx-auto max-w-[90rem]">
           <div className="flex items-end justify-between gap-6">
             <SectionHeading index="01" eyebrow="FEATURED" big>
@@ -70,7 +73,7 @@ export default function Work() {
             </Reveal>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 gap-6 md:mt-14 md:grid-cols-3 md:gap-8">
+          <div className="mt-12 grid grid-cols-1 gap-y-14 md:mt-16 md:grid-cols-3 md:gap-x-6 md:gap-y-0 lg:gap-x-10">
             {projects.map(({ project, resolved }, index) => (
               <ProjectSection key={project.id} project={project} resolved={resolved} index={index} activeTag={active} />
             ))}

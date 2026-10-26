@@ -33,7 +33,7 @@ type Props = {
   /** Blur in px at the hidden state. */
   blur?: number;
   duration?: number;
-  /** true = animate in only once and never blur back out. */
+  /** true (default) = animate in once and stay. Pass false to replay on every scroll pass. */
   once?: boolean;
 };
 
@@ -46,7 +46,7 @@ export default function Reveal({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   blur = 0, // kept for API compatibility: blur filters were the main scroll-lag source
   duration = 0.9,
-  once = false,
+  once = true,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useRef(false);

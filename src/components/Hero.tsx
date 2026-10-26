@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useIntroDone } from "./intro";
 import BackgroundVideo from "./BackgroundVideo";
 import MagneticButton from "./MagneticButton";
 import { site } from "@/data/site";
@@ -29,7 +31,26 @@ const lineItem = {
   show: { y: "0%", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
 };
 
+// Decorative timecode: ticks once a second, like a running edit timeline.
+function Timecode() {
+  const [sec, setSec] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setSec((v) => v + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const total = 14 * 60 + 32 + sec;
+  const mm = String(Math.floor(total / 60)).padStart(2, "0");
+  const ss = String(total % 60).padStart(2, "0");
+  return (
+    <div className="tabular-nums">
+      <p>FRAME {String(248 + sec * 24).padStart(4, "0")}</p>
+      <p>00:{mm}:{ss}</p>
+    </div>
+  );
+}
+
 export default function Hero() {
+  const introDone = useIntroDone();
   const lines = site.hero.headingLines;
   const total = String(portfolio.projects.length).padStart(2, "0");
 
@@ -49,7 +70,7 @@ export default function Hero() {
         <motion.div
           variants={container}
           initial="hidden"
-          animate="show"
+          animate={introDone ? "show" : "hidden"}
           className="flex h-full flex-col justify-end px-6 pb-16 md:justify-center md:px-12 md:pb-24 md:pt-24 text-shadow-depth"
         >
           <motion.p variants={item} className="label mb-6 !tracking-[0.22em] text-accent">
@@ -98,10 +119,7 @@ export default function Hero() {
 
         {/* Frame / timecode marker (decorative) */}
         <div className="label pointer-events-none absolute right-6 top-24 hidden items-start gap-3 text-right text-[0.625rem] text-muted md:right-12 md:flex" aria-hidden>
-          <div>
-            <p>FRAME 0248</p>
-            <p>00:14:32</p>
-          </div>
+          <Timecode />
           <span className="crosshair h-4 w-4 text-primary/70" />
         </div>
         <div className="pointer-events-none absolute right-12 top-44 hidden h-56 w-px bg-line-strong md:block" aria-hidden />
@@ -121,8 +139,8 @@ export default function Hero() {
         {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
+          animate={{ opacity: introDone ? 1 : 0 }}
+          transition={{ delay: 1.4, duration: 0.8 }}
           className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
           aria-hidden
         >
