@@ -24,7 +24,7 @@ export const site = {
   },
 
   // Tabs in the bar under the hero. Tags on each project (data/portfolio.ts) highlight when their tab is active.
-  specialties: ["EDITING", "MOTION", "VFX", "SOCIAL", "3D"],
+  specialties: ["MOTION GRAPHICS", "REEL EDITING", "AUTOMOTIVE", "ADS"],
 
   about: {
     heading: "ABOUT",
