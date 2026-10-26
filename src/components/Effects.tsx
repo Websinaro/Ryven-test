@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
-import { getWhatsappUrl } from "@/data/site";
-import GridPreloader from "./GridPreloader";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { site, getWhatsappUrl } from "@/data/site";
 import { setIntroDone, useIntroDone } from "./intro";
+
+const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
 // Site-wide effects: intro loader, scroll progress, custom cursor, floating chat button.
 export default function Effects() {
@@ -37,6 +38,14 @@ export default function Effects() {
   }, [reduce]);
 
   useEffect(() => {
+    const t = setTimeout(() => {
+      setLoading(false);
+      setIntroDone();
+    }, reduce ? 0 : 1500);
+    return () => clearTimeout(t);
+  }, [reduce]);
+
+  useEffect(() => {
     if (!loading) document.documentElement.classList.remove("intro-lock");
   }, [loading]);
 
@@ -60,7 +69,33 @@ export default function Effects() {
 
   return (
     <>
-      {loading && <GridPreloader onReveal={setIntroDone} onDone={() => setLoading(false)} />}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            key="loader"
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.9, ease: EASE }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#030806]"
+            style={{ clipPath: "inset(0 0 0% 0)" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <motion.img
+              src="/logo-mark.png"
+              alt={site.shortName}
+              initial={{ opacity: 0, scale: 0.9, clipPath: "inset(0 0 100% 0)" }}
+              animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0 0% 0)" }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              className="h-24 w-auto md:h-32"
+            />
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1.3, ease: EASE }}
+              className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-accent"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div
         style={{ scaleX: progress }}
